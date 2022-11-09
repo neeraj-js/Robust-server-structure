@@ -1,19 +1,26 @@
-const express = require('express');
+const express = require("express");
 const app = express();
-const morgan = require ('morgan');
-const nameValidator = (req,res,next)=>{
-    const name=req.params.name;
-    if(name.length >10){
-        next();
-    }else{
-        res.send(`${name} is a valid one`)
-    }
-};
-app.get('/name/:name',nameValidator);
+const morgan = require("morgan");
 
-const errorhandler =(err,req,res,next) => {
-    console.error(err);
-    res.send(res.send(err));
+const routeNotExist = (req, res, next) => {
+  console.log(`${req.path} doesnt exist`);
+  next("ghgjhg");
 };
-app.use(errorhandler);
-const routeNotExist = err
+const nameVal = (req, res, next) => {
+  let name = req.params.name;
+  if (name.length > 10) {
+    res.send("invalid");
+  } else {
+    next();
+  }
+};
+const errorHandler = (err, req, res, next) => {
+  console.error(err);
+  res.send(err);
+};
+
+app.use(morgan("dev"));
+app.get("/name/:name", nameVal);
+app.use(routeNotExist);
+app.use(errorHandler);
+module.exports = app;
